@@ -1,0 +1,66 @@
+---
+title: "Forest Plot"
+author: "Pradip Hui"
+date: "2023-01-23"
+output:
+  word_document: default
+  html_document: default
+---
+
+
+## R Markdown
+```{r,echo=FALSE}
+
+
+path="/cloud/project"
+setwd(path)
+library(foreign)
+data<- read.spss("data.sav",to.data.frame=TRUE)
+data1=as.data.frame(data)
+attach(data1)
+
+#### For hazard ratio
+library(survival)
+library(lubridate)
+library(ggsurvfit)
+library(gtsummary)
+library(tidycmprsk)
+#library(condSURV)
+
+## For PFS
+## Molecular Subgroup
+data1$molecular_sugroup <- factor(data1$molecular_sugroup, levels = c("WNT","SHH","group3","group4"))
+
+coxph(Surv(truncated_pfs, truncated_pfs_status) ~molecular_sugroup, data =data1) %>% 
+  tbl_regression(exp = TRUE) 
+
+
+### Age group
+data1$age_group<- factor(data1$age_group, levels = c("Less than 3","Greater than 3"))
+
+coxph(Surv(truncated_pfs, truncated_pfs_status) ~age_group, data =data1) %>% 
+  tbl_regression(exp = TRUE) 
+
+
+### Gender
+data1$Gender<- factor(data1$Gender, levels = c("Male","Female"))
+
+coxph(Surv(truncated_pfs, truncated_pfs_status) ~Gender, data =data1) %>% 
+  tbl_regression(exp = TRUE) 
+
+
+### Rec-EOR
+data1$rec_EOR<- factor(data1$rec_EOR, levels = c("STR","GTR+NTR"))
+
+coxph(Surv(truncated_pfs, truncated_pfs_status) ~rec_EOR, data =data1) %>% 
+  tbl_regression(exp = TRUE) 
+
+
+### Met-prep
+data1$mets_presentation<- factor(data1$mets_presentation, levels = c("NO","YES"))
+
+coxph(Surv(truncated_pfs, truncated_pfs_status) ~mets_presentation, data =data1) %>% 
+  tbl_regression(exp = TRUE) 
+
+
+```
